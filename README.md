@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# Stanford-QnA-Chatbot
-=======
 
 # SQuAD QA Chatbot with RAG and Vector Database
 
