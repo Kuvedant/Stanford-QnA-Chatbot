@@ -6,7 +6,7 @@
 
 This repository contains the implementation of a Question Answering (QA) system using the SQuAD 2.0 dataset. The model is based on Hugging Face's transformers library, utilizing a fine-tuned BERT model for extractive question answering. The project also incorporates Retrieval-Augmented Generation (RAG) and a vector database for real-time question answering with multi-turn conversations.
 
-![SQuADBot - Your Question Answering Companion](static/Screenshot_SQuADBot.png)
+![SQuADBot - Your Question Answering Companion](Screenshot_SQuADBot.png)
 
 ## Project Overview
 
