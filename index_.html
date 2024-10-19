@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQuAD QA Chatbot</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico"> <!-- Add this line for the favicon -->
+    <!-- Include Bootstrap for layout and basic styles -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-image: url('static/Chatbot_Background_Image_Clear_Text.jpg'); /* Add your background image here */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            font-family: 'Arial', sans-serif;
+        }
+        .overlay {
+            background-color: rgba(255, 255, 255, 0.4); /* White background with transparency */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        .chat-container {
+            max-width: 700px;
+            margin: 50px auto;
+            background: white;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            z-index: 1; /* Ensures chat container is above the background */
+        }
+        .chat-header {
+            background-color: #BBC8CE;
+            padding: 20px;
+            color: #343434;
+            text-align: center;
+            font-size: 1.7em;
+            font-weight: bold;
+            border-radius: 15px 15px 0 0;
+        }
+        .chat-messages {
+            padding: 20px;
+            height: 500px;
+            overflow-y: auto;
+            background-color: #f1f3f5;
+        }
+        .message {
+            margin-bottom: 15px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .message.bot {
+            text-align: left;
+        }
+        .message.user {
+            text-align: right;
+        }
+        .message .bubble {
+            display: inline-block;
+            padding: 12px 18px;
+            border-radius: 20px;
+            max-width: 80%;
+            line-height: 1.5;
+        }
+        .message.user .bubble {
+            background-color: #343434;
+            color: white;
+            border-radius: 20px 20px 0 20px;
+        }
+        .message.bot .bubble {
+            background-color: #dee2e6;
+            color: #333;
+            border-radius: 20px 20px 20px 0;
+        }
+        .chat-input {
+            padding: 20px;
+            background-color: #ffffff;
+            border-top: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+        }
+        .chat-input input {
+            width: calc(100% - 80px);
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            padding: 12px 20px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        .chat-input input:focus {
+            border-color:#343434;
+        }
+        .chat-input button {
+            background-color: #343434;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 20px;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .chat-input button:hover {
+            background-color: #343434;
+        }
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 10px;
+        }
+        .typing-indicator .dot {
+            width: 8px;
+            height: 8px;
+            margin: 0 4px;
+            background-color: #343434;
+            border-radius: 50%;
+            animation: typing 1.5s infinite ease-in-out;
+        }
+        .typing-indicator .dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .typing-indicator .dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-6px);
+            }
+        }
+        .pdf-upload-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .pdf-upload-container h5 {
+            color: #343434;
+        }
+        .pdf-upload-container button {
+            background-color: #343434;
+            border-color: #343434;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        .pdf-upload-container button:hover {
+            background-color: #343434;
+            border-color: #343434;
+        }
+    </style>
+</head>
+<body>
+
+<div class="overlay"></div> <!-- Transparent background layer -->
+
+<div class="chat-container">
+    <div class="chat-header">
+        SQuADBot - Your Question Answering Companion
+    </div>
+    <div class="chat-messages" id="chat-messages">
+        <!-- Messages will appear here dynamically -->
+    </div>
+    <div class="chat-input">
+        <input type="text" id="user-input" placeholder="Ask me anything...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+<!-- PDF Upload Form -->
+<div class="pdf-upload-container">
+    <h5>Upload a PDF for Contextual Question Answering</h5>
+    <form id="upload-form" enctype="multipart/form-data">
+        <input type="file" id="file-input" name="file" accept="application/pdf">
+        <button type="submit" class="btn btn-primary">Upload PDF</button>
+    </form>
+</div>
+
+<!-- Adding Bootstrap and custom JavaScript to handle messaging and PDF uploads -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Handle PDF upload form submission
+    document.getElementById('upload-form').onsubmit = async function(event) {
+        event.preventDefault();
+        const formData = new FormData();
+        const fileInput = document.getElementById('file-input');
+        formData.append('file', fileInput.files[0]);
+
+        const response = await fetch('/upload_pdf', {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+        alert(result.message);
+    };
+
+    // Function to handle sending messages
+    function sendMessage() {
+        const inputBox = document.getElementById('user-input');
+        const messageContainer = document.getElementById('chat-messages');
+        const userMessage = inputBox.value.trim();
+
+        if (userMessage) {
+            // Display user's message
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.className = 'message user';
+            userMessageDiv.innerHTML = `<div class="bubble">${userMessage}</div>`;
+            messageContainer.appendChild(userMessageDiv);
+
+            // Clear input box
+            inputBox.value = '';
+
+            // Scroll to the bottom
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+
+            // Show typing indicator
+            const typingIndicator = document.createElement('div');
+            typingIndicator.className = 'typing-indicator';
+            typingIndicator.innerHTML = `
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            `;
+            messageContainer.appendChild(typingIndicator);
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+
+            // Simulate delay for bot response
+            setTimeout(() => {
+                // Remove typing indicator
+                messageContainer.removeChild(typingIndicator);
+
+                // Send the question to the backend
+                fetch('/ask', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ question: userMessage })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Display bot's response
+                    const botMessageDiv = document.createElement('div');
+                    botMessageDiv.className = 'message bot';
+                    botMessageDiv.innerHTML = `<div class="bubble">${data.answer}</div>`;
+                    messageContainer.appendChild(botMessageDiv);
+
+                    // Scroll to the bottom again after bot response
+                    messageContainer.scrollTop = messageContainer.scrollHeight;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }, 1500); // Simulate a delay of 1.5 seconds for the bot response
+        }
+    }
+</script>
+
+</body>
+</html>
