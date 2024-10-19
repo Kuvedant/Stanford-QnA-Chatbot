@@ -93,6 +93,36 @@ Several visualizations are created to understand the model's performance:
 
 These visualizations provided a comprehensive understanding of the model's behavior and areas for improvement.
 
+## Implementation and Structure
+
+project/
+├── app.py
+├── conversation.py
+├── data_setup.py
+├── evaluation.py
+├── faiss_index.py
+├── finetune.py
+├── main.py
+├── preprocessing.py
+├── rag_model.py
+├── requirements.txt
+└── README.md
+
+## Steps to Run the SQuAD QA Chatbot
+
+1. **Clone the Repository:** Clone this repository to your local machine using the following command:
+```
+git clone https://github.com/YourUsername/YourRepoName.git
+cd YourRepoName
+```
+2. **Install the Requirements:** Install the required Python packages by running:
+   ```
+   pip install -r requirements.txt
+   ```
+3. **Setup FAISS Index** (Optional): If using a vector database for Retrieval-Augmented Generation (RAG), set up the FAISS index by running:
+   ```
+   python faiss_index.py
+    ```
 ## Conclusion
 
 This project successfully built a QA chatbot using a fine-tuned BERT model, integrated with RAG and a vector database for real-time retrieval and multi-turn conversations. The visualizations further aided in understanding model behavior and performance, leading to better fine-tuning and adjustments.
