@@ -145,4 +145,3 @@ This project successfully built a QA chatbot using a fine-tuned BERT model, inte
 ## License
 
 This project is licensed under the MIT License.
->>>>>>> Initial commit for LLM based Chatbot on Squad 2 data
