@@ -95,6 +95,7 @@ These visualizations provided a comprehensive understanding of the model's behav
 
 ## Implementation and Structure
 
+```
 project/
 ├── app.py
 ├── conversation.py
@@ -107,7 +108,7 @@ project/
 ├── rag_model.py
 ├── requirements.txt
 └── README.md
-
+```
 ## Steps to Run the SQuAD QA Chatbot
 
 1. **Clone the Repository:** Clone this repository to your local machine using the following command:
