@@ -112,10 +112,10 @@ project/
 ## Steps to Run the SQuAD QA Chatbot
 
 1. **Clone the Repository:** Clone this repository to your local machine using the following command:
-```
-git clone https://github.com/YourUsername/YourRepoName.git
-cd YourRepoName
-```
+    ```
+    git clone https://github.com/YourUsername/YourRepoName.git
+    cd YourRepoName
+    ```
 2. **Install the Requirements:** Install the required Python packages by running:
    ```
    pip install -r requirements.txt
@@ -124,6 +124,20 @@ cd YourRepoName
    ```
    python faiss_index.py
     ```
+4. **Fine-Tune the Model** (Optional): If you need to fine-tune the model on the SQuAD dataset, use:
+   ```
+   python finetune.py
+   ```
+5. **Run the Chatbot Application:** Start the chatbot using uvicorn:
+    ```
+    uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    ```
+6. **Access the Chatbot:** Open your web browser and go to the following URL to access the chatbot:
+    ```
+    http://localhost:8000
+    ```
+7. **Upload PDFs for Contextual Question Answering** (Optional): You can upload PDF files on the web interface to provide additional context for answering questions.
+
 ## Conclusion
 
 This project successfully built a QA chatbot using a fine-tuned BERT model, integrated with RAG and a vector database for real-time retrieval and multi-turn conversations. The visualizations further aided in understanding model behavior and performance, leading to better fine-tuning and adjustments.
